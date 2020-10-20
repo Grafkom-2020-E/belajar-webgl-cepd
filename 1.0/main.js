@@ -19,7 +19,8 @@ function main() {
     var vertices = [
         -0.5,-0.5,          //titik A
         0.5, -0.5,          //titik B
-       -0.5, 0.5           //titik C
+       -0.5, 0.5,           //titik C
+       0.5, 0.5             //titik D
     ];
 
 
@@ -105,8 +106,8 @@ function main() {
 
 
 
-  var primitive = gl.LINE_LOOP;
+  var primitive = gl.TRIANGLE_STRIP;
   var offset = 0;
-  var nVertex = 3;
+  var nVertex = 4;
   gl.drawArrays(primitive, offset, nVertex);
 }
