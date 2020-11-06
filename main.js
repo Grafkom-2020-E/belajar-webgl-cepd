@@ -1,67 +1,91 @@
 function main() {
-    var canvas = document.getElementById("myCanvas")
-    //canvar adalah pointer yang mengarah ke canvas
+    var canvas = document.getElementById("myCanvas");
     var gl = canvas.getContext("webgl");
-    //gl ini kayak alat tulis, canvas kertasnya
-
-    var vertexShaderSource = `
-    void main(){
-        gl_PointSize = 80.0;
-        gl_Position = vec4(0.0, 0.2, 0.0, 1.0);
-        
-    }
-    `;
-    //gl position ini poin nya (x,y,z,w) meskipun di 2 dimensi, z masih ttp ditulis meskipun 0. 
-
-    var fragmentShaderSource = `
-    void main(){
-        gl_FragColor = vec4(1.0, 1.0, 0.0, 1.0);
-    }`;
-
-    //buat objek shader , buat .c di GPU
-
+  
+    // Definisi data verteks 3 buah titik
+    /**
+     * Titik A (-0.5, -0.5)
+     * Titik B ( 0.5, -0.5)
+     * Titik C ( 0.5,  0.5)
+     * Titik D (-0.5,  0.5)
+     */
+    var vertices = [
+      -0.5, -0.5, 1.0, 0.0, 0.0,      // Titik A, MERAH
+      0.5, -0.5, 0.0, 1.0, 0.0,       // Titik B, HIJAU
+      0.5, 0.5, 0.0, 0.0, 1.0,        // Titik C, BIRU
+      -0.5, -0.5, 1.0, 1.0, 1.0,      // Titik A, PUTIH
+      0.5, 0.5, 1.0, 1.0, 1.0,        // Titik C, PUTIH
+      -0.5, 0.5, 1.0, 1.0, 1.0        // Titik D, PUTIH
+    ];
+  
+    var vertexBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+    gl.bindBuffer(gl.ARRAY_BUFFER, null);
+  
+    var vertexShaderSource = document.getElementById("vertexShaderSource").text;
+    var fragmentShaderSource = document.getElementById("fragmentShaderSource").text;
+  
+    // Buat .c di GPU
     var vertexShader = gl.createShader(gl.VERTEX_SHADER);
-    var fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
-
-    //ini buat apa ya???
     gl.shaderSource(vertexShader, vertexShaderSource);
+    var fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
     gl.shaderSource(fragmentShader, fragmentShaderSource);
-
-    //Compile .c ke .o
+  
+    // Kompilasi .c agar menjadi .o
     gl.compileShader(vertexShader);
-
-    if(!gl.getShaderParameter(vertexShader,gl.COMPILE_STATUS))
-    {
-        console.error('ERROR COMPILING vertex shadder!', gl.getShaderInfoLog(vertexShader));
-    }
-
-
     gl.compileShader(fragmentShader);
-
-    if(!gl.getShaderParameter(fragmentShader,gl.COMPILE_STATUS))
-    {
-        console.error('ERROR COMPILING fragment shadder!', gl.getShaderInfoLog(fragmentShader));
-    }
-   
+  
     // Siapkan wadah untuk .exe (shader program)
     var shaderProgram = gl.createProgram();
-
-    //masukkan .o ke dalam wadah .exe
+  
+    // Masukkan .o ke dalam wadah .exe
     gl.attachShader(shaderProgram, vertexShader);
     gl.attachShader(shaderProgram, fragmentShader);
-
-    //sambungkan antar .o agar bisa menjadi 
-    //runnable context di dalam wadah .exe tadi
+  
+    // Sambungkan antar .o agar bisa menjadi
+    //    runnable context di dalam wadah .exe tadi
     gl.linkProgram(shaderProgram);
-
-    //mulai menggunakan konteks 
+  
+    // Mulai menggunakan konteks (cat)
     gl.useProgram(shaderProgram);
-
-    //mulai mewarnaiiii
-    gl.clearColor(0.0, 0.0, 0.0, 1.0); //RGBA
+  
+    // Ajarkan attribute a_Position di GPU
+    //  tentang pengambilan data verteks dari ARRAY_BUFFER
+    gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+    var aPositionLoc = gl.getAttribLocation(shaderProgram, "a_Position");
+    var aColorLoc = gl.getAttribLocation(shaderProgram, "a_Color");
+    gl.vertexAttribPointer(
+      aPositionLoc, 
+      2, 
+      gl.FLOAT, 
+      false, 
+      5 * Float32Array.BYTES_PER_ELEMENT, 
+      0);
+    gl.vertexAttribPointer(
+      aColorLoc, 
+      3, 
+      gl.FLOAT, 
+      false, 
+      5 * Float32Array.BYTES_PER_ELEMENT, 
+      2 * Float32Array.BYTES_PER_ELEMENT);
+    gl.enableVertexAttribArray(aPositionLoc);
+    gl.enableVertexAttribArray(aColorLoc);
+    gl.bindBuffer(gl.ARRAY_BUFFER, null);
+  
+    gl.clearColor(0.0, 0.0, 0.0, 1.0);
     gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.viewport(100, 0, canvas.height, canvas.height);
+  
+    var primitive = gl.TRIANGLES;
+    var offset = 0;
+    var nVertex = 6;
 
 
-    //buat apa ini ketinggalan T-T
-    gl.drawArrays(gl.POINTS, 0, 1);
-}
+        //definisikan variabel pointer ke uniform
+        var uD = gl.getUniformLocation(shaderProgram, 'u_d');
+        var d = [0.5, 0.5];
+        gl.uniform2fv(uD, d);
+
+    gl.drawArrays(primitive, offset, nVertex);
+  }
