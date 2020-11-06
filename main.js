@@ -87,5 +87,15 @@ function main() {
         var d = [0.5, 0.5];
         gl.uniform2fv(uD, d);
 
-    gl.drawArrays(primitive, offset, nVertex);
+
+        function render(){
+            d[0] -= 0.001;
+            d[1] -= 0.001;
+            gl.uniform2fv(uD,d);
+            gl.clearColor(0.0, 0.0, 0.0, 1.0);
+            gl.clear(gl.COLOR_BUFFER_BIT);
+            gl.drawArrays(primitive, offset, nVertex);
+            requestAnimationFrame(render);
+        }
+    requestAnimationFrame(render);
   }
