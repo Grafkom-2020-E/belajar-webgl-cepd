@@ -83,8 +83,8 @@ function main() {
 
 
         //definisikan variabel pointer ke uniform
-        var uD = gl.getUniformLocation(shaderProgram, 'u_d');
-        var d = [0.5, 0.5];
+       var uD = gl.getUniformLocation(shaderProgram, 'u_d');
+      var d = [0.5, 0.5];
         gl.uniform2fv(uD, d);
 
 
@@ -94,8 +94,8 @@ function main() {
             gl.uniform2fv(uD,d);
             gl.clearColor(0.0, 0.0, 0.0, 1.0);
             gl.clear(gl.COLOR_BUFFER_BIT);
-            gl.drawArrays(primitive, offset, nVertex);
-            requestAnimationFrame(render);
+           gl.drawArrays(primitive, offset, nVertex);
+         requestAnimationFrame(render);
         }
     requestAnimationFrame(render);
-  }
+ }
