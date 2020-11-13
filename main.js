@@ -93,6 +93,20 @@ function main() {
           freeze = !freeze;
         }
 
+        function onKeyDown(event){
+          if(event.keyCode == 32)
+            freeze = true;
+        }
+
+        function onKeyUp(event){
+          freeze = false;
+          if(event.keyCode == 32)
+            freeze = false;
+        }
+
+        document.addEventListener('keydown', onKeyDown);
+        document.addEventListener('keyup', onKeyUp);
+
         document.addEventListener('click', onMouseClick);
 
         function render(){
