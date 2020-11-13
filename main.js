@@ -88,9 +88,19 @@ function main() {
         gl.uniform2fv(uD, d);
 
 
+        var freeze = false; //ketika tidak freeze
+        function onMouseClick(event){
+          freeze = !freeze;
+        }
+
+        document.addEventListener('click', onMouseClick);
+
         function render(){
+          if(!freeze){
+            //jika tidak freeze kalukan inkrementasi
             d[0] -= 0.001;
             d[1] -= 0.001;
+          }
             gl.uniform2fv(uD,d);
             gl.clearColor(0.0, 0.0, 0.0, 1.0);
             gl.clear(gl.COLOR_BUFFER_BIT);
