@@ -88,6 +88,7 @@ function main() {
   gl.uniformMatrix4fv(u_Projection, false, projection);
 
   var speed = 0.01;
+  var angularspeed = glMatrix.glMatrix.toRadian(1);
   function onKeyDown(event) {
     console.log(event.keyCode);
     if (event.keyCode == 65) {
@@ -106,6 +107,7 @@ function main() {
   document.addEventListener('keydown', onKeyDown);
   
   function render() {
+    glMatrix.mat4.rotate(model,model,angularspeed,[1.0,1.0,1.0] );
     gl.uniformMatrix4fv(u_Model, false, model);
     gl.uniformMatrix4fv(u_View, false, view);
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
